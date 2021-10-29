@@ -5,7 +5,7 @@ from django.shortcuts import render
 #from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import generics
-from geocoding.models import Task
+from geocoding.models import Task, Point
 from geocoding.serializers import FileUploadSerializer, SaveFileSerializer
 from geocoding.utils import get_address, get_distance
 
@@ -38,6 +38,20 @@ from geocoding.utils import get_address, get_distance
 #        pass
 
 
+#class Task(models.Model):
+#    point = models.CharField(max_length=255)
+#    latitude = models.FloatField()
+#    longitude = models.FloatField()
+#    status = models.BooleanField()  # (running, done)
+#    task_id = models.UUIDField(default=uuid.uuid4)
+#    address = models.CharField(max_length=255)
+#    distance = models.FloatField()
+#
+#    def __str__(self):
+#        return self.task_id
+
+
+
 class UploadFileView(generics.CreateAPIView):
     serializer_class = FileUploadSerializer
     
@@ -45,7 +59,23 @@ class UploadFileView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         myfile = serializer.validated_data['myfile']
-        reader = pd.read_csv(myfile)
-        print("***")
-        print(myfile)
-        return Response({'Hi there': "complete"})
+        reader = pd.read_csv(myfile)  # probably can use in func
+        task_obj = Task.objects.create()
+
+        for _, row in reader.iterrows():
+            # print(row['latitude'], row['longitude'])
+            # address = get_address(row['latitude'], row['longitude'])
+
+            new_item = Point.objects.create(
+                task_id = task_obj, 
+                name = row['point'],
+                address = get_address(row['latitude'], row['longitude'])
+            )
+            new_item.save()
+
+
+            print("***")
+        print(len(reader))
+        print(type(reader))
+        print(reader)
+        return Response({'Hi there': "complete"})  # !!! need to be task_id, status
