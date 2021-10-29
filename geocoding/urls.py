@@ -1,6 +1,6 @@
 from django.urls import path
-from geocoding.views import TaskView
+from geocoding.views import UploadFileView
 
 urlpatterns = [
-    path('calculateDistances/', TaskView.as_view()),
+    path('calculateDistances/', UploadFileView.as_view()),
 ]
