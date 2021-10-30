@@ -1,6 +1,5 @@
-import io
-import csv
 import pandas as pd
+from itertools import combinations
 from django.shortcuts import render
 #from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -56,26 +55,38 @@ class UploadFileView(generics.CreateAPIView):
     serializer_class = FileUploadSerializer
     
     def post(self, request, *args, **kwargs):
+        d = {}
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         myfile = serializer.validated_data['myfile']
         reader = pd.read_csv(myfile)  # probably can use in func
         task_obj = Task.objects.create()
-
         for _, row in reader.iterrows():
-            # print(row['latitude'], row['longitude'])
-            # address = get_address(row['latitude'], row['longitude'])
-
-            new_item = Point.objects.create(
-                task_id = task_obj, 
-                name = row['point'],
-                address = get_address(row['latitude'], row['longitude'])
+            new_point_item = Point.objects.create(
+                task_id=task_obj, 
+                name=row['point'],
+                address=get_address(row['latitude'], row['longitude'])
             )
-            new_item.save()
+            d[row['point']] = (row['latitude'], row['longitude'])
 
 
-            print("***")
-        print(len(reader))
-        print(type(reader))
-        print(reader)
-        return Response({'Hi there': "complete"})  # !!! need to be task_id, status
+        d = get_distance(d)
+
+        
+        print(d)
+
+
+
+        return Response(
+            {
+                'task_id': task_obj.task_id,
+                'status': task_obj.status
+            }
+        )  # !!! need to be task_id, status
+
+
+
+# need to implement logic to save point and its coordinates (tuple)
+# create dict to save there 
+# calculation
+# save to db
