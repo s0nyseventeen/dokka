@@ -4,7 +4,7 @@ from django.shortcuts import render
 #from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import generics
-from geocoding.models import Task, Point
+from geocoding.models import Task, Point, Link
 from geocoding.serializers import FileUploadSerializer, SaveFileSerializer
 from geocoding.utils import get_address, get_distance
 
@@ -72,7 +72,14 @@ class UploadFileView(generics.CreateAPIView):
 
         d = get_distance(d)
 
-        
+        for k, v in d.items():
+            new_link_item = Link.objects.create(
+                task_id=task_obj,
+                name=k,
+                distance=d[k]
+            )
+
+
         print(d)
 
 

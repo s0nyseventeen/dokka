@@ -31,8 +31,11 @@ class Link(models.Model):
     """
     Results from each Task
     """
-    task = models.ForeignKey(Task, on_delete=models.CASCADE)
+    task_id = models.ForeignKey(Task, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     distance = models.FloatField()
+
+    def __str__(self):
+        return self.name
 
 
