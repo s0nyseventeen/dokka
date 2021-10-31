@@ -3,7 +3,6 @@ import uuid
 
 
 class Task(models.Model):
-    status = models.BooleanField(default=False)  # (running, done)
     task_id = models.UUIDField(default=uuid.uuid4)
 
     def __str__(self):

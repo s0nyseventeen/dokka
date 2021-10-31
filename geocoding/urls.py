@@ -1,7 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from geocoding.views import (UploadFileView, TaskApiView, 
-                             PointApiView, LinkApiView)
+from geocoding.views import UploadFileView, TaskApiView 
 
 #router = DefaultRouter()
 #router.register('Task', TaskApiView)
