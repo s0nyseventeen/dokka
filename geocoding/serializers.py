@@ -1,19 +1,27 @@
 from rest_framework import serializers
-from .models import Task
+from geocoding.models import Point, Link, Task
 
 
 class FileUploadSerializer(serializers.Serializer):
     myfile = serializers.FileField()
 
 
-class SaveFileSerializer(serializers.Serializer):
+class PointSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Point
+        fields = 'name', 'address'
+
+
+class LinkSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Link
+        fields = 'name', 'distance'
+
+
+class TaskSerializer(serializers.ModelSerializer):
+    points = PointSerializer(read_only=True, many=True)
+    links = LinkSerializer(read_only=True, many=True) 
+
     class Meta:
         model = Task
-        fields = '__all__'
-#        fields = (
-#            #'task_id',  # need them when upload file?
-#            #'status',   
-#            'point',
-#            'latitude',
-#            'longitude'  # to show in response?
-#        )
+        fields = 'task_id', 'status', 'points', 'links'

@@ -3,13 +3,8 @@ import uuid
 
 
 class Task(models.Model):
-    #point = models.CharField(max_length=255)
-    #latitude = models.FloatField()
-    #longitude = models.FloatField()
     status = models.BooleanField(default=False)  # (running, done)
     task_id = models.UUIDField(default=uuid.uuid4)
-    # address = models.CharField(max_length=255)
-    # distance = models.FloatField() 
 
     def __str__(self):
         return f"{self.task_id}"
@@ -19,7 +14,11 @@ class Point(models.Model):
     """
     Results from each Task
     """
-    task_id = models.ForeignKey(Task, on_delete=models.CASCADE)
+    task_id = models.ForeignKey(
+        Task, 
+        related_name='points',
+        on_delete=models.CASCADE
+    )
     name = models.CharField(max_length=255)
     address = models.CharField(max_length=255)
 
@@ -31,11 +30,13 @@ class Link(models.Model):
     """
     Results from each Task
     """
-    task_id = models.ForeignKey(Task, on_delete=models.CASCADE)
+    task_id = models.ForeignKey(
+        Task,
+        related_name='links',
+        on_delete=models.CASCADE
+    )
     name = models.CharField(max_length=255)
     distance = models.FloatField()
 
     def __str__(self):
         return self.name
-
-
